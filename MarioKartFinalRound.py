@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------
 #!/usr/bin/env python
 # Shannon Stasek
-# Mario Kart Tournament
+# Mario Kart Final Tournament
 #----------------------------------------------------------------------
 
 from TrackSet import *
@@ -73,33 +73,31 @@ def drawKartStart(win):
     header.setSize(18)
     header.draw(win)
     
+    track = Text(Point(125, 75), 'Round 1 - 150cc Track List:')
+    track.setStyle("bold")
+    track.draw(win)
     quitButton = Button(win, Point(725, 750), 80, 40, 'Quit')
     quitButton.activate()
     trackButton = Button(win, Point(625, 750), 90, 40, 'Next Round')
-    startButton = Button(win, Point(525, 750), 80, 40, 'Start')
-    startButton.activate()
-    
-    x = win.getMouse()
-    while not startButton.clicked(x):
-        x = win.getMouse()
-    
-    startButton.deactivate()
-
-    track = Text(Point(100, 75), 'Round 1 Track List:')
-    track.setStyle("bold")
-    track.draw(win)
+    trackButton.activate()
 
     return quitButton, trackButton
 
 #----------------------------------------------------------------------
     
-def drawFourTracks(d, startx, y, win):
-    
-    for i in range(0, 4):
-        c = d.selectOne()
-        filename = trackInfo(c)
-        drawKart(filename, startx, y, win)
-        startx += 200
+def drawFourTracks(d, startx, y, win, trackTotal):
+    if trackTotal == 2:
+        for i in range(0, 2):
+            c = d.selectOne()
+            filename = trackInfo(c)
+            drawKart(filename, startx, y, win)
+            startx += 200
+    else:
+        for i in range(0, 4):
+            c = d.selectOne()
+            filename = trackInfo(c)
+            drawKart(filename, startx, y, win)
+            startx += 200
 
 #----------------------------------------------------------------------
     
@@ -110,12 +108,11 @@ def main():
     drawLogoStart(win)
     
     quitButton, trackButton = drawKartStart(win)
-    trackButton.activate()
     
     d = TrackSet()
 
-    # display initial 4 tracks for round 1
-    drawFourTracks(d, 100, 150, win)
+    # display initial 8 tracks for round 1
+    drawFourTracks(d, 100, 150, win, 8)
 
     # setting variable amounts for next tracks
     currentRound = 2
@@ -126,16 +123,22 @@ def main():
     while currentRound <= 5:
         y = win.getMouse()
         if trackButton.clicked(y) and currentRound <=4:
-            if currentRound <4:
-                track = Text(Point(100, ytext), 'Round ' + str(currentRound) + ' Track List:')
+            if currentRound == 2:
+                track = Text(Point(155, ytext), 'Round 1 - 150cc Race 2 Track List:')
                 track.setStyle("bold")
                 track.draw(win)
+                drawFourTracks(d, 100, yval, win, 4)
+            elif currentRound == 3:
+                track = Text(Point(160, ytext), 'Round 2 - 150cc Mirrored Track List:')
+                track.setStyle("bold")
+                track.draw(win)
+                drawFourTracks(d, 100, yval, win, 4)
             else:
-                track = Text(Point(100, ytext), 'FINAL ROUND!')
+                track = Text(Point(150, ytext), 'FINAL ROUND - 200cc Track List:')
                 track.setStyle("bold")
                 track.draw(win)
                 trackButton.deactivate()
-            drawFourTracks(d, 100, yval, win)
+                drawFourTracks(d, 100, yval, win, 2)
             yval += 160
             ytext += 160
             currentRound+=1
